@@ -6,7 +6,7 @@ offset = 10
 
 
 class SignalDetector:
-    def __init__(self, camera_num, calibration_width=1000, calibration_height=500, measurement_offset=10):
+    def __init__(self, camera_num, calibration_width=1000, calibration_height=500, measurement_offset=10, thresh_min=30):
         """ Sets up the camera object.
 
         Calibration refers to the frame the camera captured.  This is used for drawing the calibration line.
@@ -30,6 +30,7 @@ class SignalDetector:
         self.calibration_width = calibration_width
         self.calibration_height = calibration_height
         self.measurement_offset = measurement_offset
+        self.threshold_minimum = thresh_min
 
         self.window_name = window_name
         self.previous_measurement = np.zeros((self.measurement_offset, self.calibration_width, 3), np.uint8)
@@ -116,8 +117,11 @@ class SignalDetector:
             elif event == cv2.EVENT_LBUTTONUP:
                 self.calibration_line[1] = (x, y)
                 self.calibrating = False
-                self.process()
-                self.calibrate()
+                if self.calibration_line[0][0] == self.calibration_line[1][0]:
+                    self.calibration_line[1] = None
+                else:
+                    self.process()
+                    self.calibrate()
             elif event == cv2.EVENT_MOUSEMOVE and self.calibrating:
                 self.calibration_line[1] = (x, y)
         return click_callback
@@ -125,7 +129,9 @@ class SignalDetector:
     def get_values(self):
         gray_output = cv2.cvtColor(self.output, cv2.COLOR_BGR2GRAY)
         rows, cols = gray_output.shape
-        output_signal = [max(gray_output[:, c]) for c in range(cols)]
+        threshold_output = cv2.threshold(gray_output, 30, None, type=cv2.THRESH_TOZERO)[1]
+        cv2.normalize(threshold_output, threshold_output, 0, 80, cv2.NORM_MINMAX)
+        output_signal = [max(threshold_output[:, c]) for c in range(cols)]
         return output_signal
 
     def calibrate(self):
