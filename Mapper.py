@@ -10,6 +10,9 @@ class Mapper:
         self.h = 500
         self.image = self.reset_plot()
 
+    def add_signal_with_camera(self, signal, camera):
+        self.add_signal(signal, camera.position_x, camera.position_y, camera.angle, camera.viewing_angle)
+
     def add_signal(self, signal, cx, cy, ca, va):
         """
 
@@ -25,15 +28,17 @@ class Mapper:
         angle_width = float(va) / len(signal)
         for idx, point in enumerate(signal):
             contour = self.calculate_triangle(cx, cy, ca, angle_width*idx, angle_width)
-
+            print(point)
             cv2.drawContours(
                 temp_image,
                 np.array([contour]),
                 0,
-                (point),
+                (int(point)),
                 -1
             )
         self.image = cv2.addWeighted(temp_image, 1, self.image, 1, 0)
+
+        return self.image
 
     def calculate_triangle(self, cx, cy, ca, ma, angle_width):
         """
@@ -69,16 +74,17 @@ class Mapper:
         cv2.imshow(window_name, self.image)
 
 
-signal_1 = [25]*10 + [50]*10 + [75]*10 + [100]*10
-signal_2 = [25]*10 + [50]*10 + [75]*10 + [100]*10
+def test_mapper():
+    signal_1 = [25]*10 + [50]*10 + [75]*10 + [100]*10
+    signal_2 = [25]*10 + [50]*10 + [75]*10 + [100]*10
 
-mapper = Mapper()
-mapper.add_signal(signal_1, 100, 100, 0, 45)
-mapper.add_signal(signal_2, 300, 100, -45, 60)
-mapper.draw_image()
+    mapper = Mapper()
+    mapper.add_signal(signal_1, 100, 100, 0, 45)
+    mapper.add_signal(signal_2, 300, 100, -45, 60)
+    mapper.draw_image()
 
-while(True):
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+    while(True):
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
-cv2.destroyAllWindows()
+    cv2.destroyAllWindows()

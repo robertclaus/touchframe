@@ -129,7 +129,7 @@ class SignalDetector:
     def get_values(self):
         gray_output = cv2.cvtColor(self.output, cv2.COLOR_BGR2GRAY)
         rows, cols = gray_output.shape
-        threshold_output = cv2.threshold(gray_output, 30, None, type=cv2.THRESH_TOZERO)[1]
+        threshold_output = cv2.threshold(gray_output, 30.0, 255.0, type=cv2.THRESH_TOZERO)[1]
         cv2.normalize(threshold_output, threshold_output, 0, 80, cv2.NORM_MINMAX)
         output_signal = [max(threshold_output[:, c]) for c in range(cols)]
         return output_signal
