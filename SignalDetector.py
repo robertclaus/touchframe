@@ -20,6 +20,7 @@ class SignalDetector:
         measurement_offset : Height of the measurment image below the calibration image
 
         """
+        self.camera_num = camera_num
         window_name = "Camera " + str(camera_num)
         self.cap = cv2.VideoCapture(camera_num)
         cv2.namedWindow(window_name)
@@ -75,6 +76,7 @@ class SignalDetector:
         self.update_state(new_measurement)
 
         cv2.imshow(self.window_name, np.vstack((frame, new_measurement, self.previous_measurement, self.output)))
+        cv2.moveWindow(self.window_name, (self.camera_num % 1) * self.calibration_width, (((self.camera_num / 2) % 2) * self.calibration_height) )
 
         return self.get_values()
 

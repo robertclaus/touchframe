@@ -9,6 +9,7 @@ class Mapper:
         self.w = 500
         self.h = 500
         self.image = self.reset_plot()
+        self.image_brightness = 80
 
     def add_signal_with_camera(self, signal, camera):
         self.add_signal(signal, camera.position_x, camera.position_y, camera.angle, camera.viewing_angle)
@@ -26,16 +27,18 @@ class Mapper:
         temp_image = self.get_empty_image()
 
         angle_width = float(va) / len(signal)
+        contours = []
         for idx, point in enumerate(signal):
-            contour = self.calculate_triangle(cx, cy, ca, angle_width*idx, angle_width)
-            print(point)
-            cv2.drawContours(
-                temp_image,
-                np.array([contour]),
-                0,
-                (int(point)),
-                -1
-            )
+            if point != 0:
+                contours.append( self.calculate_triangle(cx, cy, ca, angle_width*idx, angle_width) )
+
+        cv2.drawContours(
+            temp_image,
+            np.array(contours),
+            0,
+            (self.image_brightness),
+            -1
+        )
         self.image = cv2.addWeighted(temp_image, 1, self.image, 1, 0)
 
         return self.image
