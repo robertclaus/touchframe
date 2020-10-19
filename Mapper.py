@@ -28,7 +28,6 @@ class Mapper:
         angle_width = float(va) / len(signal)
         for idx, point in enumerate(signal):
             contour = self.calculate_triangle(cx, cy, ca, angle_width*idx, angle_width)
-            print(point)
             cv2.drawContours(
                 temp_image,
                 np.array([contour]),

@@ -53,5 +53,5 @@ while(True):
         break
 
 # When everything done, release the capture
-releases = [camera.release() for camera in cameras]
+releases = [camera.camera_reader.release() for camera in cameras]
 cv2.destroyAllWindows()
