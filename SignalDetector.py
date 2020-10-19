@@ -20,6 +20,7 @@ class SignalDetector:
         measurement_offset : Height of the measurment image below the calibration image
 
         """
+        self.camera_num = camera_num
         window_name = "Camera " + str(camera_num)
         self.cap = cv2.VideoCapture(camera_num)
         cv2.namedWindow(window_name)
