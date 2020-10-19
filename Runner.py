@@ -14,9 +14,14 @@ while(True):
     if k == ord('c'):
         [camera.calibrate() for camera in cameras]
     if k == ord('p'):
-        for output_signal in process_results:
-            plt.scatter(range(len(output_signal)), output_signal)
-            plt.show()
+        fig, axs = plt.subplots(len(process_results))
+        for idx, output_signal in enumerate(process_results):
+            if len(process_results) > 1:
+                axs[idx].scatter(range(len(output_signal)), output_signal)
+            else:
+                axs.scatter(range(len(output_signal)), output_signal)
+        fig.show()
+
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
